@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 // load .env to use .env keys file
 require("dotenv").config();
 
@@ -29,22 +27,26 @@ var spotify = new Spotify({
 
 // Initialize Twitter
 
-var getTweets = function(tweets) {
-	var client = new Twitter(keys.twitterKeys);
-
-	var paramaters = {
-		screen_name: "IntheDZone"
-	};
-	client.get("statuses/user_timeline", paramaters, function(error, tweets, response) {
-		if (!error) {
-			for (var i = 0; i < tweets.length; i++) {
-				console.log(tweets[i].created_at);
-				console.log("");
-				console.log(tweets[i].text);
-			}
+var getMyTweets = function() {
+	var client = new Twitter(keys.twitter);
+  
+	var params = { screen_name: "cnn" };
+	client.get("statuses/user_timeline", params, function(error, tweets, response) {
+	  if (!error) {
+		var data = [];
+  
+		for (var i = 0; i < tweets.length; i++) {
+		  data.push({
+			created_at: tweets[i].created_at,
+			text: tweets[i].text
+		  });
 		}
+  
+		console.log(data);
+		
+	  }
 	});
-};
+  };
 
 // ******** SPOTIFY ********* //
 
@@ -65,7 +67,9 @@ var getSpotify = function(songName) {
 		}
 
 		var songs = data.tracks.items;
-
+		var getArtistNames = function(artist) {
+			return artist.name;
+		};
 		for (var i = 0; i < songs.length; i++) {
 			console.log(i);
 			console.log("Artist: " + songs[i].artists.map(getArtistNames));
@@ -105,23 +109,21 @@ var getMovie = function(movieName) {
 	});
 };
 
-
-
 var doThis = function(thisThing) {
 
 }
 
 
-var action = function(caseData, functionData) {
+var main = function(caseData) {
 	switch (caseData) {
 		case "my-tweets":
-			getTweets();
+			getMyTweets();
 			break;
 		case "spotify-this-song":
-			getSpotify();
+			getSpotify(object);
 			break;
 		case "movie-this":
-			getMovie();
+			getMovie(object);
 			break;
 		case "do-what-it-says":
 			doThis();
@@ -131,12 +133,6 @@ var action = function(caseData, functionData) {
 	}
 };
 
-
-var nodeRun = function(argv1, argv2) {
-	pick(argv1, argv2);
-};
-
-
-nodeRun(process.argv[2], process.argv[3]);
+main(action);
 
 
